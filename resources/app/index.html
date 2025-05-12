@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TaskFlow - Планировщик задач</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="dark_theme_updated.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      </head>
+<body>
+  <div class="app">
+    <!-- Боковая панель -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">
+          <i class="fas fa-tasks"></i>
+          TaskFlow
+        </h1>
+        <button class="mobile-menu-toggle" id="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <ul>
+          <li class="active">
+            <a href="#" data-page="dashboard">
+              <i class="fas fa-home"></i>
+              Обзор
+            </a>
+          </li>
+          <li>
+          <li>
+            <a href="#" data-page="settings">
+              <i class="fas fa-cog"></i>
+              Настройки
+            </a>
+          </li>
+        </ul>
+      </nav>
+      
+<div class="theme-container">
+    <button class="theme-toggle-btn" id="theme-toggle" title="Переключить тему">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Страница обзора (главная) -->
+        <div class="page" id="dashboard-page">
+          <header class="page-header">
+            <div>
+              <h1>Планировщик задач</h1>
+              <p>Управляйте своими задачами и финансовыми целями в одном месте</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" id="add-task-btn">
+                <i class="fas fa-plus"></i>
+                Добавить задачу
+              </button>
+            </div>
+          </header>
+
+          <!-- Статистика -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon bg-primary">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Задачи на сегодня</p>
+                <p class="stat-value" id="today-tasks-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <i class="fas fa-calendar"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">События на неделю</p>
+                <p class="stat-value" id="week-events-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-accent">
+                <i class="fas fa-piggy-bank"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Финансовые цели</p>
+                <p class="stat-value" id="goals-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-gray">
+                <i class="fas fa-check-double"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Завершено за месяц</p>
+                <p class="stat-value" id="completed-count">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="dashboard-grid">
+            <!-- Календарь -->
+            <div class="dashboard-calendar card">
+              <div class="card-header">
+                <h2>Календарь</h2>
+                <div class="calendar-nav">
+                  <button class="btn-icon" id="prev-month">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <span id="current-month">Май 2025</span>
+                  <button class="btn-icon" id="next-month">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="calendar" id="calendar-container">
+                  <!-- Календарь будет генерироваться JavaScript -->
+                </div>
+                <div class="calendar-events">
+                  <div class="calendar-events-header">
+                    <h3>События на <span id="selected-date">3 мая</span></h3>
+                    <button class="btn btn-ghost" id="add-event-btn">
+                      <i class="fas fa-plus"></i>
+                      Добавить событие
+                    </button>
+                  </div>
+                  <div id="events-list">
+                    <!-- События на выбранную дату будут добавлены здесь -->
+                    <div class="empty-state">
+                      <i class="fas fa-calendar"></i>
+                      <p>На этот день нет событий</p>
+                      <button class="btn btn-outline" id="add-event-empty-btn">
+                        Добавить событие
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Финансовые цели -->
+            <div class="dashboard-goals card">
+              <div class="card-header">
+                <h2>Финансовые цели</h2>
+                <button class="btn btn-ghost" id="add-goal-btn">
+                  <i class="fas fa-plus"></i>
+                  Добавить цель
+                </button>
+              </div>
+              <div class="card-body">
+                <div id="goals-list">
+                  <!-- Финансовые цели будут добавлены здесь -->
+                  <div class="empty-state">
+                    <i class="fas fa-piggy-bank"></i>
+                    <p>У вас пока нет финансовых целей</p>
+                    <button class="btn btn-outline" id="add-goal-empty-btn">
+                      Создать новую цель
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Задачи -->
+          <div class="tasks-container card">
+            <div class="card-header">
+              <h2>Задачи на сегодня</h2>
+              <div class="today-date" id="today-date">3 мая 2025</div>
+            </div>
+            <div class="card-body">
+              <div id="tasks-list">
+                <!-- Задачи будут добавлены здесь -->
+                <div class="empty-state">
+                  <i class="fas fa-check"></i>
+                  <p>На сегодня нет задач</p>
+                  <button class="btn btn-outline" id="add-task-empty-btn">
+                    Добавить задачу
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Страница календаря -->
+        <div class="page hidden" id="calendar-page">
+          <header class="page-header">
+            <div>
+              <h1>Календарь</h1>
+              <p>Планируйте свои события и встречи</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" id="add-event-page-btn">
+                <i class="fas fa-plus"></i>
+                Добавить событие
+              </button>
+            </div>
+          </header>
+          
+          <!-- Статистика -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon bg-primary">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">События сегодня</p>
+                <p class="stat-value" id="today-events-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <i class="fas fa-calendar-week"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">События на неделю</p>
+                <p class="stat-value" id="page-week-events-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-accent">
+                <i class="fas fa-user-friends"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Встречи</p>
+                <p class="stat-value" id="meetings-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-gray">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Всего событий</p>
+                <p class="stat-value" id="total-events-count">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Основной календарь -->
+          <div class="card full-calendar-card">
+            <div class="card-header">
+              <h2>Календарь событий</h2>
+              <div class="calendar-nav">
+                <button class="btn-icon" id="page-prev-month">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span id="page-current-month">Май 2025</span>
+                <button class="btn-icon" id="page-next-month">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="calendar" id="page-calendar-container">
+                <!-- Календарь будет генерироваться JavaScript -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- События выбранного дня -->
+          <div class="card">
+            <div class="card-header">
+              <h2>События на <span id="page-selected-date">3 мая</span></h2>
+              <button class="btn btn-ghost" id="add-selected-day-event-btn">
+                <i class="fas fa-plus"></i>
+                Добавить событие
+              </button>
+            </div>
+            <div class="card-body">
+              <div id="page-events-list">
+                <!-- События на выбранную дату будут добавлены здесь -->
+                <div class="empty-state">
+                  <i class="fas fa-calendar"></i>
+                  <p>На этот день нет событий</p>
+                  <button class="btn btn-outline" id="page-add-event-empty-btn">
+                    Добавить событие
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Страница задач -->
+        <div class="page hidden" id="tasks-page">
+          <header class="page-header">
+            <div>
+              <h1>Задачи</h1>
+              <p>Управляйте своими задачами и отслеживайте их выполнение</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" id="add-task-page-btn">
+                <i class="fas fa-plus"></i>
+                Добавить задачу
+              </button>
+            </div>
+          </header>
+          
+          <!-- Статистика -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon bg-primary">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Всего задач</p>
+                <p class="stat-value" id="total-tasks-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Выполнено сегодня</p>
+                <p class="stat-value" id="completed-today-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-accent">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Предстоящие задачи</p>
+                <p class="stat-value" id="upcoming-tasks-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-gray">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Эффективность, %</p>
+                <p class="stat-value" id="tasks-efficiency">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Секция сегодняшних задач -->
+          <div class="tasks-grid">
+            <!-- Задачи на сегодня -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Задачи на сегодня</h2>
+                <div class="today-date" id="page-today-date">3 мая 2025</div>
+              </div>
+              <div class="card-body">
+                <div id="page-tasks-list">
+                  <!-- Задачи будут добавлены здесь -->
+                  <div class="empty-state">
+                    <i class="fas fa-check"></i>
+                    <p>На сегодня нет задач</p>
+                    <button class="btn btn-outline" id="page-add-task-empty-btn">
+                      Добавить задачу
+                    </button>
+                  </div>
+                </div>
+                <form id="page-new-task-form" class="new-task-form">
+                  <input 
+                    type="text" 
+                    id="page-new-task-input" 
+                    placeholder="Добавить новую задачу..."
+                    class="task-input"
+                  >
+                  <button type="submit" class="btn btn-primary btn-icon" disabled>
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+            
+            <!-- Предстоящие задачи -->
+            <div class="card">
+              <div class="card-header">
+                <h2>Предстоящие задачи</h2>
+                <button class="btn btn-ghost" id="sort-upcoming-tasks-btn">
+                  <i class="fas fa-sort"></i>
+                  Сортировка
+                </button>
+              </div>
+              <div class="card-body">
+                <div id="upcoming-tasks-list">
+                  <!-- Предстоящие задачи будут добавлены здесь -->
+                  <div class="empty-state">
+                    <i class="fas fa-tasks"></i>
+                    <p>У вас нет предстоящих задач</p>
+                    <button class="btn btn-outline" id="add-upcoming-task-btn">
+                      Добавить задачу
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Выполненные задачи -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Выполненные задачи</h2>
+              <button class="btn btn-ghost" id="clear-completed-tasks-btn">
+                <i class="fas fa-trash"></i>
+                Очистить
+              </button>
+            </div>
+            <div class="card-body">
+              <div id="completed-tasks-list">
+                <!-- Выполненные задачи будут добавлены здесь -->
+                <div class="empty-state">
+                  <i class="fas fa-check-double"></i>
+                  <p>У вас пока нет выполненных задач</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Страница финансовых целей -->
+        <div class="page hidden" id="goals-page">
+          <header class="page-header">
+            <div>
+              <h1>Финансовые цели</h1>
+              <p>Отслеживайте прогресс достижения ваших финансовых целей</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" id="add-goal-page-btn">
+                <i class="fas fa-plus"></i>
+                Добавить цель
+              </button>
+            </div>
+          </header>
+          
+          <!-- Статистика -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon bg-primary">
+                <i class="fas fa-piggy-bank"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Активные цели</p>
+                <p class="stat-value" id="page-goals-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Достигнутые цели</p>
+                <p class="stat-value" id="completed-goals-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-accent">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Всего накоплено</p>
+                <p class="stat-value" id="total-saved">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon bg-gray">
+                <i class="fas fa-bullseye"></i>
+              </div>
+              <div class="stat-info">
+                <p class="stat-title">Общая цель</p>
+                <p class="stat-value" id="total-goal">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Текущие финансовые цели -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Текущие финансовые цели (в разработке)</h2>
+              <div class="goal-filters">
+                <button class="btn btn-ghost active" data-filter="all">Все</button>
+                <button class="btn btn-ghost" data-filter="urgent">Срочные</button>
+                <button class="btn btn-ghost" data-filter="regular">Регулярные</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="page-goals-list">
+                <!-- Финансовые цели будут добавлены здесь -->
+                <div class="empty-state">
+                  <i class="fas fa-piggy-bank"></i>
+                  <p>У вас пока нет финансовых целей</p>
+                  <button class="btn btn-outline" id="page-add-goal-empty-btn">
+                    Создать новую цель
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- История платежей -->
+          <div class="card">
+            <div class="card-header">
+              <h2>История платежей (в разработке)</h2>
+              <div class="time-filters">
+                <button class="btn btn-ghost active" data-time="week">Неделя</button>
+                <button class="btn btn-ghost" data-time="month">Месяц</button>
+                <button class="btn btn-ghost" data-time="year">Год</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="payments-history">
+                <!-- История платежей будет добавлена здесь -->
+                <div class="empty-state">
+                  <i class="fas fa-history"></i>
+                  <p>История платежей пуста</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Страница настроек -->
+        <div class="page hidden" id="settings-page">
+          <header class="page-header">
+            <div>
+              <h1>Настройки</h1>
+              <p>Настройте приложение и управляйте своими данными</p>
+            </div>
+          </header>
+          <!-- Импорт/Экспорт данных -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Импорт/Экспорт данных</h2>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <button id="export-data-btn" class="btn btn-primary">
+                  <i class="fas fa-download"></i>
+                  Экспортировать данные
+                </button>
+                <p class="form-help">Сохраните ваши данные в файл для резервного копирования</p>
+              </div>
+              <div class="form-group">
+                <label for="import-file">Импортировать данные</label>
+                <div class="import-container">
+                  <input type="file" id="import-file" accept=".json">
+                  <button id="import-data-btn" class="btn btn-outline">
+                    <i class="fas fa-upload"></i>
+                    Импортировать
+                  </button>
+                </div>
+                <p class="form-help">Загрузите ранее экспортированный файл с данными</p>
+              </div>
+              <div class="form-group">
+                <button id="reset-data-btn" class="btn btn-danger">
+                  <i class="fas fa-trash"></i>
+                  Сбросить все данные
+                </button>
+                <p class="form-help warning">Внимание: Это удалит все ваши задачи, события и финансовые цели</p>
+              </div>
+
+<div class="card" id="about-author-card">
+  <div class="card-header">
+    <h2>Информация об авторе</h2>
+  </div>
+  <div class="card-body">
+    <p><strong>Информация о скрипте:</strong></p>
+    <p>Авторские права принадлежат <strong>Fluffy Barbara (Гонцовский Никита Русланович)</strong></p>
+    <p>© Fluffy Barbara (Гонцовский Никита Русланович)</p>
+    <p>Версия скрипта: <strong>1.0</strong></p>
+    <p>Последнее обновление скрипта: <strong>09.05.2025</strong></p>
+    <p>Следите за подробной информацией в Discord сервере:</p>
+    <p><a href="https://discord.gg/QxNGkTxgx2" target="_blank">https://discord.gg/QxNGkTxgx2</a></p>
+    <p>((ссылка кликабельна))</p>
+    <p>По поводу предложений, улучшений пишите в личные сообщения в Discord: <strong>fluffybarbara</strong></p>
+  </div>
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Модальные окна -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="task-modal-title">Создать задачу</h2>
+        <button class="modal-close" data-modal="task-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="task-form">
+          <input type="hidden" id="task-id">
+          <div class="form-group">
+            <label for="task-title">Название</label>
+            <input type="text" id="task-title" required>
+          </div>
+          <div class="form-group">
+            <label for="task-description">Описание</label>
+            <textarea id="task-description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="task-due-date">Срок</label>
+              <input type="date" id="task-due-date" required>
+            </div>
+            <div class="form-group">
+              <label for="task-due-time">Время</label>
+              <input type="time" id="task-due-time">
+            </div>
+          </div>
+          <div class="form-group form-checkbox">
+            <input type="checkbox" id="task-completed">
+            <label for="task-completed">Задача выполнена</label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" data-modal="task-modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="event-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="event-modal-title">Создать событие</h2>
+        <button class="modal-close" data-modal="event-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="event-form">
+          <input type="hidden" id="event-id">
+          <div class="form-group">
+            <label for="event-title">Название</label>
+            <input type="text" id="event-title" required>
+          </div>
+          <div class="form-group">
+            <label for="event-description">Описание</label>
+            <textarea id="event-description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="event-date">Дата</label>
+              <input type="date" id="event-date" required>
+            </div>
+            <div class="form-group">
+              <label for="event-time">Время</label>
+              <input type="time" id="event-time" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="event-type">Тип события</label>
+            <select id="event-type" required>
+              <option value="meeting">Встреча</option>
+              <option value="task">Задача</option>
+              <option value="personal">Личное</option>
+              <option value="finance">Финансы</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" data-modal="event-modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="goal-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="goal-modal-title">Создать финансовую цель</h2>
+        <button class="modal-close" data-modal="goal-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="goal-form">
+          <input type="hidden" id="goal-id">
+          <div class="form-group">
+            <label for="goal-title">Название</label>
+            <input type="text" id="goal-title" required>
+          </div>
+          <div class="form-group">
+            <label for="goal-description">Описание</label>
+            <textarea id="goal-description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="goal-target-amount">Цель (₽)</label>
+              <input type="number" id="goal-target-amount" min="0" step="100" required>
+            </div>
+            <div class="form-group">
+              <label for="goal-deadline">Срок достижения</label>
+              <input type="date" id="goal-deadline">
+            </div>
+          </div>
+          <div class="form-group form-checkbox">
+            <input type="checkbox" id="goal-no-deadline">
+            <label for="goal-no-deadline">Без срока достижения</label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" data-modal="goal-modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="payment-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="payment-modal-title">Добавить платеж</h2>
+        <button class="modal-close" data-modal="payment-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="payment-form">
+          <input type="hidden" id="payment-goal-id">
+          <div class="form-group">
+            <label for="payment-amount">Сумма (₽)</label>
+            <input type="number" id="payment-amount" min="0" step="100" required>
+          </div>
+          <div class="form-group">
+            <label for="payment-date">Дата</label>
+            <input type="date" id="payment-date" required>
+          </div>
+          <div class="form-group">
+            <label for="payment-note">Примечание</label>
+            <textarea id="payment-note"></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-outline" data-modal="payment-modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Подтверждение</h2>
+        <button class="modal-close" data-modal="confirm-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message">Вы уверены?</p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" data-modal="confirm-modal">Отмена</button>
+          <button type="button" class="btn btn-danger" id="confirm-button">Удалить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast уведомления -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Загружаем новый улучшенный скрипт -->
+  <script src="app.js"></script>
+  <script src="fix_theme.js"></script>
+</body>
+</html>
