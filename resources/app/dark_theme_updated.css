@@ -1,0 +1,95 @@
+/* Стили для круглой кнопки переключения темы */
+
+/* Контейнер для кнопки в боковой панели */
+.theme-container {
+  padding: 1rem;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+body.dark-mode .theme-container {
+  border-top-color: #374151;
+}
+
+/* Круглая кнопка переключения темы */
+.theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6; /* Светло-серый фон кнопки в светлой теме */
+  color: #4b5563;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.theme-toggle-btn:hover {
+  background-color: #e5e7eb;
+}
+
+body.dark-mode .theme-toggle-btn {
+  background-color: #1f2937; /* Тёмно-серый фон в тёмной теме */
+  color: #ffffff;
+}
+
+body.dark-mode .theme-toggle-btn:hover {
+  background-color: #374151;
+}
+
+/* Стили для кнопки в настройках */
+.theme-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+body.dark-mode .theme-section {
+  border-bottom-color: #374151;
+}
+
+.theme-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--gray-900);
+}
+
+body.dark-mode .theme-title {
+  color: #e4e6eb;
+}
+
+.theme-description {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin-bottom: 1rem;
+}
+
+body.dark-mode .theme-description {
+  color: #9ca3af;
+}
+
+.theme-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.theme-toggle-label {
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle-label i {
+  margin-right: 0.5rem;
+  color: var(--gray-500);
+}
+
+body.dark-mode .theme-toggle-label i {
+  color: #9ca3af;
+}
